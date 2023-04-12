@@ -1,5 +1,4 @@
-name: Build and Deploy App to CloudFront
-on:
+name: Build and Deploy App to S3 Bucket
   push:
     branches: [ main ]
 jobs:
@@ -9,7 +8,7 @@ jobs:
     env:
       BUCKET: ${{ secrets.BUCKET_NAME }}
       DIST: .
-      REGION: us-west-2
+      REGION: us-east-1
       DIST_ID: ${{ secrets.DIST_ID }}
 
     steps:
@@ -26,7 +25,7 @@ jobs:
     - name: Copy files s3 bucket
       run: |
         aws s3 sync --delete ${{ env.DIST }} s3://${{ env.BUCKET }}
-    - name: Invalidate cache
+    - name: Invalidate cloudfront cache
       run: |
         aws cloudfront create-invalidation \
           --distribution-id ${{ env.DIST_ID }} \
